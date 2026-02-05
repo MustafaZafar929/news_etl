@@ -1,0 +1,9 @@
+load_from:
+  - grpc_server:
+      host: ingestion_service
+      port: 4000
+      location_name: ingestion_service
+  - grpc_server:
+      host: processing_service
+      port: 4000 # Docker internal port is still 4000 (see note below)
+      location_name: processing_service

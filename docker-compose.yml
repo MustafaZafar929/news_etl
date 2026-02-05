@@ -1,0 +1,49 @@
+services:
+  dagster_webserver:
+    build: ./webserver
+    environment:
+      - DAGSTER_HOME=/opt/dagster/dagster_home
+      - DAGSTER_POSTGRES_USER=${DAGSTER_POSTGRES_USER}
+      - DAGSTER_POSTGRES_PASSWORD=${DAGSTER_POSTGRES_PASSWORD}
+      - DAGSTER_POSTGRES_DB=${DAGSTER_POSTGRES_DB}
+      - DAGSTER_POSTGRES_HOSTNAME=${DAGSTER_POSTGRES_HOSTNAME}
+      - DAGSTER_POSTGRES_PORT=${DAGSTER_POSTGRES_PORT}
+    volumes:
+      - ./workspace.yaml:/opt/dagster/app/workspace.yaml
+      - ./dagster.yaml:/opt/dagster/dagster_home/dagster.yaml
+    ports:
+      - "3000:3000"
+    depends_on:
+      - ingestion_service
+      - processing_service
+    command: dagster dev -w workspace.yaml -h 0.0.0.0 -p 3000
+
+  ingestion_service:
+    build: ./ingestion
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - DAGSTER_HOME=/opt/dagster/dagster_home
+      - DAGSTER_POSTGRES_USER=${DAGSTER_POSTGRES_USER}
+      - DAGSTER_POSTGRES_PASSWORD=${DAGSTER_POSTGRES_PASSWORD}
+      - DAGSTER_POSTGRES_DB=${DAGSTER_POSTGRES_DB}
+      - DAGSTER_POSTGRES_HOSTNAME=${DAGSTER_POSTGRES_HOSTNAME}
+      - DAGSTER_POSTGRES_PORT=${DAGSTER_POSTGRES_PORT}
+    volumes:
+      - ./dagster.yaml:/opt/dagster/dagster_home/dagster.yaml
+    ports:
+      - "4000"
+
+  processing_service:
+    build: ./processing
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - DAGSTER_HOME=/opt/dagster/dagster_home
+      - DAGSTER_POSTGRES_USER=${DAGSTER_POSTGRES_USER}
+      - DAGSTER_POSTGRES_PASSWORD=${DAGSTER_POSTGRES_PASSWORD}
+      - DAGSTER_POSTGRES_DB=${DAGSTER_POSTGRES_DB}
+      - DAGSTER_POSTGRES_HOSTNAME=${DAGSTER_POSTGRES_HOSTNAME}
+      - DAGSTER_POSTGRES_PORT=${DAGSTER_POSTGRES_PORT}
+    volumes:
+      - ./dagster.yaml:/opt/dagster/dagster_home/dagster.yaml
+    ports:
+      - "4001"
