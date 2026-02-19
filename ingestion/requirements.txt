@@ -1,0 +1,7 @@
+dagster
+dagster-postgres
+dagster-docker
+feedparser
+aiohttp
+psycopg2-binary
+python-dotenv

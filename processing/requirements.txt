@@ -1,0 +1,9 @@
+dagster
+dagster-postgres
+dagster-docker
+psycopg2-binary
+sentence-transformers
+scikit-learn
+numpy<2.0.0
+python-dotenv
+pandas

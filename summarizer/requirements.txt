@@ -1,0 +1,6 @@
+dagster
+dagster-postgres
+psycopg2-binary
+requests
+openai
+python-dotenv
