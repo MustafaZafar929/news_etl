@@ -150,29 +150,8 @@ def topic_clusters():
 # --- JOB DEFINITIONS ---
 process_job = define_asset_job(name="process_news_job", selection=["article_vectors", "topic_clusters"])
 
-# Schedule: Runs every hour at minute 15
-process_schedule = ScheduleDefinition(
-    job=process_job,
-    cron_schedule="15 * * * *", 
-    default_status=DefaultScheduleStatus.RUNNING,
-    name="hourly_processing"
-)
-
-# --- SENSORS ---
-@run_status_sensor(run_status=DagsterRunStatus.SUCCESS, monitor_all_code_locations=True, request_job=process_job)
-def trigger_processing_on_ingestion_success(context):
-    """
-    Triggers the processing job when the ingestion job succeeds.
-    """
-    # Check if the successful run is the one we care about
-    # Note: ingest_news_job is defined in a different code location (ingestion),
-    # but run status sensors see all runs in the instance.
-    if context.dagster_run.job_name == "ingest_news_job":
-        yield RunRequest(job_name="process_news_job")
-
 defs = Definitions(
     assets=[article_vectors, topic_clusters],
     jobs=[process_job],
-    schedules=[process_schedule],
     sensors=[trigger_processing_on_ingestion_success]
 )

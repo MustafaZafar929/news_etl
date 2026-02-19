@@ -7,3 +7,7 @@ load_from:
       host: processing_service
       port: 4000 # Docker internal port is still 4000 (see note below)
       location_name: processing_service
+  - grpc_server:
+      host: summarizer_service
+      port: 4002 # Docker internal port
+      location_name: summarizer_service
